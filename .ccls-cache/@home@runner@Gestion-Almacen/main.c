@@ -35,12 +35,36 @@ typedef struct{
   Cliente cliente;
 }Pedido;
 
+int is_equal_int(void *key1, void *key2) {
+  return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
+}
+
 Pedido *crearPedido(){
   Pedido *pedido = (Pedido *)malloc(sizeof(Pedido));
   return pedido;
 }
 
-void cargarPedidosCSV(List *pedidos){
+Producto *crearProducto(){
+  Producto *producto = (Producto *)malloc(sizeof(Producto));
+  return producto;
+}
+
+void gestionarInventario(Map *inventario){
+  
+}
+
+void actualizarInventario(Map *inventario, char *nombreProducto, int cantidad){
+  MapPair *pair = map_search(inventario, nombreProducto);
+  if(pair == NULL)
+    puts("No se encontró el producto");
+  else {
+    Producto *producto = (Producto *)pair->value;
+    producto->cantidad -= cantidad;
+  }
+}
+
+
+void cargarPedidosCSV(List *pedidos, Map *inventario){
   FILE *archivo = fopen("data/pedidos.csv", "r");
   if(archivo == NULL){
     perror("No se pudo abrir el archivo\n");
@@ -60,12 +84,10 @@ void cargarPedidosCSV(List *pedidos){
   Pedido *aux = (Pedido *)list_first(pedidos);
   while(aux){
     printf("Precio: %d, Cantdad: %d, Producto: %s, Tipo de producto: %s\n", aux->productoPedido.precioVenta, aux->productoPedido.cantidad, aux->productoPedido.nombre, aux->productoPedido.tipoProducto);
+    actualizarInventario(inventario, aux->productoPedido.nombre, aux->productoPedido.cantidad);
     aux = (Pedido *)list_next(pedidos);
   }
 }
-
-
-
 
 
 
@@ -76,6 +98,7 @@ int main() {
 
   int opcion;
   List *pedidos = list_create();
+  Map *inventario = map_create(is_equal_int);
 
   do {
     mostrarMenuPrincipal();
