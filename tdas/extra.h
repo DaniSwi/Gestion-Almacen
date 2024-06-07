@@ -43,4 +43,6 @@ void limpiarPantalla();
 
 void presioneTeclaParaContinuar();
 
+void mostrarMenuPrincipal();
+
 #endif
