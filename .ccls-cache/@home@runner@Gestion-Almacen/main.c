@@ -12,7 +12,7 @@ typedef struct{
   int dia;
   int mes;
   int year;
-} fechaVencimiento;
+}fechaVencimiento;
 
 typedef struct{
   int precioCosto;
@@ -40,9 +40,8 @@ Pedido *crearPedido(){
   return pedido;
 }
 
-
-void cargarPedidos(List *pedidos){
-  FILE *archivo = fopen("pedidos.csv", "r");
+void cargarPedidosCSV(List *pedidos){
+  FILE *archivo = fopen("data/pedidos.csv", "r");
   if(archivo == NULL){
     perror("No se pudo abrir el archivo\n");
     return;
@@ -60,7 +59,7 @@ void cargarPedidos(List *pedidos){
   fclose(archivo);
   Pedido *aux = (Pedido *)list_first(pedidos);
   while(aux){
-    printf("Precio: %d, Cantdad: %d, Producto: %s, Tipo de producto: %s\n", aux->monto, aux->productoPedido.cantidad, aux->productoPedido.nombre, aux->productoPedido.tipoProducto);
+    printf("Precio: %d, Cantdad: %d, Producto: %s, Tipo de producto: %s\n", aux->productoPedido.precioVenta, aux->productoPedido.cantidad, aux->productoPedido.nombre, aux->productoPedido.tipoProducto);
     aux = (Pedido *)list_next(pedidos);
   }
 }
@@ -75,20 +74,27 @@ void cargarPedidos(List *pedidos){
 
 int main() {
 
-  char opcion;
+  int opcion;
   List *pedidos = list_create();
 
-  
   do {
     mostrarMenuPrincipal();
     printf("Ingrese su opción: ");
-    scanf(" %c", &opcion);
+    scanf("%d", &opcion);
     switch(opcion){
-      case '1':
-        cargarPedidos(pedidos);
+      case 1:
+        cargarPedidosCSV(pedidos);
         break;
+      case 2:
+        break;
+      case 3:
+        break;
+      case 4:
+        break;
+      default:
+        puts("Opción no válida, intente nuevamente");
     }
-    
+    presioneTeclaParaContinuar();
   } while(opcion != 4);
   
   

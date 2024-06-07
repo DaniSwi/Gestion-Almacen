@@ -59,17 +59,13 @@ void presioneTeclaParaContinuar() {
 void mostrarMenuPrincipal() {
   limpiarPantalla();
   puts("========================================");
-  puts("     Base de Datos de Películas");
+  puts("     Almacén de Productos ");
   puts("========================================");
 
-  puts("1) Cargar Películas");
-  puts("2) Buscar por id");
-  puts("3) Buscar por director");
-  puts("4) Buscar por género");
-  puts("5) Buscar por década");
-  puts("6) Buscar por rango de calificaciones");
-  puts("7) Buscar por década y género");
-  puts("8) Salir");
+  puts("1) Cargar pedidos CSV");
+  puts("2) Test");
+  puts("3) Test");
+  puts("4) Salir");
 }
 
 int is_equal_str(void *key1, void *key2) {
