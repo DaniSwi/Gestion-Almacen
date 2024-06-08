@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h> 
+#include <ctype.h>
 
 //ELIMINAR ULTIMO CAMBIO ---> git reset --hard HEAD~1 (vengan a la puta ayudantia cabrones)
 
@@ -49,8 +49,18 @@ Producto *crearProducto(){
   return producto;
 }
 
-void gestionarInventario(Map *inventario){
-  
+
+
+void visualizacionInventario(Map *inventario){
+  printf("Inventario:\n");
+  MapPair *pair = map_first(inventario);
+  while(pair){
+    Producto *producto = (Producto *)pair->value;
+    puts("=====================");
+    printf("Nombre: %s\n", producto->nombre);
+    printf("Tipo: %s\n", producto->tipoProducto);
+    printf("Cantidad: %d\n", producto->cantidad);
+  }
 }
 
 void actualizarInventario(Map *inventario, char *nombreProducto, int cantidad){
