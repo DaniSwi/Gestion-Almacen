@@ -47,22 +47,22 @@ Producto *crearProducto(){
 
 void agregarProductoInventario(Map *inventario, char *nombreProducto){
   MapPair *pair = map_search(inventario, nombreProducto);
-  Producto *producto = NULL;
+  Producto *producto;
   if(pair){
     producto = (Producto *)pair->value;
     ++producto->cantidad;
   } else {
     producto = crearProducto();
-    puts("Ingrese el nombre del producto: ");
-    scanf(" [^\n]1000%s", producto->nombre);
-    puts("Ingrese el precio de costo del producto: ");
+    strcpy(producto->nombre, nombreProducto);
+    printf("Ingrese el precio de costo del producto: ");
     scanf("%d", &producto->precioCosto);
-    puts("Ingrese el precio de venta del producto: ");
+    printf("Ingrese el precio de venta del producto: ");
     scanf("%d", &producto->precioVenta);
-    puts("Ingrese el tipo de producto :");
-    scanf(" [^\n]1000%s", producto->tipoProducto);
+    printf("Ingrese el tipo de producto: ");
+    scanf(" %[^\n]1000s", producto->tipoProducto);
+    producto->cantidad = 1;
   }
-  puts("Ingrese la fecha de vencimiento del producto (dd/mm/yyyy):");
+  printf("Ingrese la fecha de vencimiento del producto (dd/mm/yyyy): ");
   scanf("%d/%d/%d", &producto->fechaV.dia, &producto->fechaV.mes, &producto->fechaV.year);
   map_insert(inventario, producto->nombre, producto);
 }
@@ -71,11 +71,12 @@ void visualizacionInventario(Map *inventario){
   printf("Inventario:\n");
   MapPair *pair = map_first(inventario);
   while(pair){
-    Producto *producto = (Producto *)pair->value;
+    Producto *producto = pair->value;
     puts("=====================");
     printf("Nombre: %s\n", producto->nombre);
     printf("Tipo: %s\n", producto->tipoProducto);
     printf("Cantidad: %d\n", producto->cantidad);
+    pair = map_next(inventario);
   }
 }
 
@@ -115,6 +116,19 @@ void cargarPedidosCSV(List *pedidos, Map *inventario){ //funcionaaaaaaaa
   }
 }
 
+void cargarCargaDesdeCSV(Map *inventario){
+  FILE *archico = fopen("data/carga.csv", "r");
+  if(archico == NULL){
+    perror("No se pudo abrir el archivo\n");
+    return;
+  }
+  char **campos;
+  campos = leer_linea_csv(archico, ',');
+  while ((campos = leer_linea_csv(archico, ',')) != NULL){
+    agregarProductoInventario(inventario, campos[0]);
+    
+  }
+}
 
 
 
@@ -124,7 +138,7 @@ int main() {
 
   int opcion;
   List *pedidos = list_create();
-  Map *inventario = map_create(is_equal_int);
+  Map *inventario = map_create(is_equal_str);
   char nombreProducto[10000];
 
   do {
@@ -133,7 +147,7 @@ int main() {
     scanf("%d", &opcion);
     switch(opcion){
       case 1:
-        puts("Ingrese el nombre del producto: ");
+        printf("Ingrese el nombre del producto: ");
         scanf(" %[^\n]10000s", nombreProducto);
         agregarProductoInventario(inventario, nombreProducto);
         break;
@@ -141,8 +155,10 @@ int main() {
         cargarPedidosCSV(pedidos, inventario);
         break;
       case 3:
+        visualizacionInventario(inventario);
         break;
       case 4:
+        cargarCargaDesdeCSV(inventario);
         break;
       default:
         puts("Opción no válida, intente nuevamente");
