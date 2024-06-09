@@ -45,4 +45,8 @@ void presioneTeclaParaContinuar();
 
 void mostrarMenuPrincipal();
 
+int is_equal_str(void *key1, void *key2);
+
+int is_equal_int(void *key1, void *key2);
+
 #endif

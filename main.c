@@ -35,10 +35,6 @@ typedef struct{
   Cliente cliente;
 }Pedido;
 
-int is_equal_int(void *key1, void *key2) {
-  return *(int *)key1 == *(int *)key2; // Compara valores enteros directamente
-}
-
 Pedido *crearPedido(){
   Pedido *pedido = (Pedido *)malloc(sizeof(Pedido));
   return pedido;
@@ -49,7 +45,27 @@ Producto *crearProducto(){
   return producto;
 }
 
-
+void agregarProductoInventario(Map *inventario, char *nombreProducto){
+  MapPair *pair = map_search(inventario, nombreProducto);
+  Producto *producto = NULL;
+  if(pair){
+    producto = (Producto *)pair->value;
+    ++producto->cantidad;
+  } else {
+    producto = crearProducto();
+    puts("Ingrese el nombre del producto: ");
+    scanf(" [^\n]1000%s", producto->nombre);
+    puts("Ingrese el precio de costo del producto: ");
+    scanf("%d", &producto->precioCosto);
+    puts("Ingrese el precio de venta del producto: ");
+    scanf("%d", &producto->precioVenta);
+    puts("Ingrese el tipo de producto :");
+    scanf(" [^\n]1000%s", producto->tipoProducto);
+  }
+  puts("Ingrese la fecha de vencimiento del producto (dd/mm/yyyy):");
+  scanf("%d/%d/%d", &producto->fechaV.dia, &producto->fechaV.mes, &producto->fechaV.year);
+  map_insert(inventario, producto->nombre, producto);
+}
 
 void visualizacionInventario(Map *inventario){
   printf("Inventario:\n");
@@ -74,7 +90,7 @@ void actualizarInventario(Map *inventario, char *nombreProducto, int cantidad){
 }
 
 
-void cargarPedidosCSV(List *pedidos, Map *inventario){
+void cargarPedidosCSV(List *pedidos, Map *inventario){ //funcionaaaaaaaa
   FILE *archivo = fopen("data/pedidos.csv", "r");
   if(archivo == NULL){
     perror("No se pudo abrir el archivo\n");
@@ -93,8 +109,8 @@ void cargarPedidosCSV(List *pedidos, Map *inventario){
   fclose(archivo);
   Pedido *aux = (Pedido *)list_first(pedidos);
   while(aux){
-    printf("Precio: %d, Cantdad: %d, Producto: %s, Tipo de producto: %s\n", aux->productoPedido.precioVenta, aux->productoPedido.cantidad, aux->productoPedido.nombre, aux->productoPedido.tipoProducto);
-    actualizarInventario(inventario, aux->productoPedido.nombre, aux->productoPedido.cantidad);
+    printf("Precio: %d, Cantdad: %d, Producto: %s, Tipo de producto: %s\n", aux->productoPedido.precioVenta, aux->productoPedido.cantidad, aux->productoPedido.nombre, aux->productoPedido.tipoProducto); //Arreglar el print nota!=!=!=
+    //actualizarInventario(inventario, aux->productoPedido.nombre, aux->productoPedido.cantidad);
     aux = (Pedido *)list_next(pedidos);
   }
 }
@@ -109,6 +125,7 @@ int main() {
   int opcion;
   List *pedidos = list_create();
   Map *inventario = map_create(is_equal_int);
+  char nombreProducto[10000];
 
   do {
     mostrarMenuPrincipal();
@@ -116,9 +133,12 @@ int main() {
     scanf("%d", &opcion);
     switch(opcion){
       case 1:
-        cargarPedidosCSV(pedidos);
+        puts("Ingrese el nombre del producto: ");
+        scanf(" %[^\n]10000s", nombreProducto);
+        agregarProductoInventario(inventario, nombreProducto);
         break;
       case 2:
+        cargarPedidosCSV(pedidos, inventario);
         break;
       case 3:
         break;
