@@ -45,7 +45,7 @@ Producto *crearProducto(){
   return producto;
 }
 
-void agregarProductoInventario(Map *inventario, char *nombreProducto){
+void agregarProductoInventarioUser(Map *inventario, char *nombreProducto){
   MapPair *pair = map_search(inventario, nombreProducto);
   Producto *producto;
   if(pair){
@@ -116,6 +116,16 @@ void cargarPedidosCSV(List *pedidos, Map *inventario){ //funcionaaaaaaaa
   }
 }
 
+void agregarProductoAuto(Map *inventario, Producto *producto){
+  MapPair *pair = map_search(inventario, producto->nombre);
+  if(pair){
+    Producto *productoInventario = (Producto *)pair->value;
+    productoInventario->cantidad += producto->cantidad;
+  } else 
+    map_insert(inventario, producto->nombre, producto);
+}
+
+
 void cargarCargaDesdeCSV(Map *inventario){
   FILE *archico = fopen("data/carga.csv", "r");
   if(archico == NULL){
@@ -125,14 +135,18 @@ void cargarCargaDesdeCSV(Map *inventario){
   char **campos;
   campos = leer_linea_csv(archico, ',');
   while ((campos = leer_linea_csv(archico, ',')) != NULL){
-    agregarProductoInventario(inventario, campos[0]);
-    
+    Producto *producto = crearProducto();
+    strcpy(producto->nombre, campos[0]);
+    producto->precioCosto = atoi(campos[1]);
+    producto->precioVenta = atoi(campos[2]);
+    producto->cantidad = atoi(campos[3]);
+    strcpy(producto->tipoProducto, campos[4]);
+    producto->fechaV.dia = atoi(campos[5]);
+    producto->fechaV.mes = atoi(campos[6]);
+    producto->fechaV.year = atoi(campos[7]);
+    agregarProductoAuto(inventario, producto);
   }
 }
-
-
-
-
 
 int main() {
 
@@ -149,7 +163,7 @@ int main() {
       case 1:
         printf("Ingrese el nombre del producto: ");
         scanf(" %[^\n]10000s", nombreProducto);
-        agregarProductoInventario(inventario, nombreProducto);
+        agregarProductoInventarioUser(inventario, nombreProducto);
         break;
       case 2:
         cargarPedidosCSV(pedidos, inventario);
