@@ -1,6 +1,7 @@
 #include "tdas/list.h"
 #include "tdas/map.h"
 #include "tdas/extra.h"
+#include "tdas/heap.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -125,7 +126,6 @@ void agregarProductoAuto(Map *inventario, Producto *producto){
     map_insert(inventario, producto->nombre, producto);
 }
 
-
 void cargarCargaDesdeCSV(Map *inventario){
   FILE *archico = fopen("data/carga.csv", "r");
   if(archico == NULL){
@@ -148,12 +148,19 @@ void cargarCargaDesdeCSV(Map *inventario){
   }
 }
 
+void cargarCuenta(Cliente *cliente){
+  
+}
+
+
+
 int main() {
 
   int opcion;
   List *pedidos = list_create();
   Map *inventario = map_create(is_equal_str);
   char nombreProducto[10000];
+  Heap *productosVencimiento = heap_create();
 
   do {
     mostrarMenuPrincipal();
@@ -174,11 +181,13 @@ int main() {
       case 4:
         cargarCargaDesdeCSV(inventario);
         break;
+      case 5:
+        puts("hola")
       default:
         puts("Opción no válida, intente nuevamente");
     }
     presioneTeclaParaContinuar();
-  } while(opcion != 4);
+  } while(opcion != 9);
   
   
   return 0;
