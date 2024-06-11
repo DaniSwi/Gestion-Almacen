@@ -1,3 +1,3 @@
-PrecioVenta,CantidadComprada,NombreProducto,TipoProducto
-2000,5,Pan,Abarrote
-400,6,Alfi,Postre
+CantidadComprada,NombreProducto
+5,Pan
+6,Alfi
