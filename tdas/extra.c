@@ -63,12 +63,14 @@ void mostrarMenuPrincipal() {
   puts("========================================");
 
   puts("1) Agregar producto al inventario manualmente");
-  puts("2) Cargar lista de pedido a CSV");
+  puts("2) Cargar lista desde archivo CSV");
   puts("3) Visualizar el inventario");
   puts("4) Gestionar nueva carga de productos desde CSV");
   puts("5) Exportar inventario a CSV");
   puts("6) Mostrar productos que se venden en la tienda");
-  
+  puts("7) Cuadrar el inventario");
+  puts("8) Buscar producto por código");
+  puts("9) Buscar productos por tipo");
 }
 
 int is_equal_str(void *key1, void *key2) {
