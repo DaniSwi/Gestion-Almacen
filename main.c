@@ -63,6 +63,7 @@ void formatearCadena(char *cadena){
     }
 }
 
+
 void leerCodigoBarra() {
 
     char codigoBarra[100];
@@ -75,9 +76,15 @@ void leerCodigoBarra() {
 void agregarProductoInventarioUser(Map *inventario){
     char car = 'n';
     do {
+
+        printf("=================================\n");
+        printf("       Agregar producto.\n");
+        printf("=================================\n");
+      
         int codigo;
         printf("Ingrese el código del producto: ");
         scanf("%d", &codigo);
+        getchar();
         MapPair *pair = map_search(inventario, &codigo); // O(1)
         Producto *producto = crearProducto();
         producto->codigo = codigo;
@@ -86,21 +93,27 @@ void agregarProductoInventarioUser(Map *inventario){
             producto = copiarProducto(list_first(listaProductos));
             printf("Ingrese la fecha de vencimiento del producto (dd/mm/yyyy): ");
             scanf("%d/%d/%d", &producto->fechaV.dia, &producto->fechaV.mes, &producto->fechaV.year);
+            getchar();
             list_pushBack(listaProductos, producto);
         } else {
             List *listaProductos = list_create();
             printf("Ingrese el nombre del producto: ");
             scanf(" %[^\n]1000s", producto->nombre);
+            getchar();
             formatearCadena(producto->nombre);
             printf("Ingrese el precio de costo del producto: ");
             scanf("%d", &producto->precioCosto);
+            getchar();
             printf("Ingrese el precio de venta al público del producto: ");
             scanf("%d", &producto->precioVenta);
+            getchar();
             printf("Ingrese el tipo de producto: ");
             formatearCadena(producto->tipoProducto);
             scanf(" %[^\n]1000s", producto->tipoProducto);
+            getchar();
             printf("Ingrese la fecha de vencimiento del producto (dd/mm/yyyy): ");
             scanf("%d/%d/%d", &producto->fechaV.dia, &producto->fechaV.mes, &producto->fechaV.year);
+            getchar();
             list_pushBack(listaProductos, producto);
             map_insert(inventario, &producto->codigo, listaProductos);
         }
@@ -386,34 +399,44 @@ int main(int argc, char *argv[]) {
         scanf("%d", &opcion);
         switch(opcion){
             case 1:
+                limpiarPantalla();
                 agregarProductoInventarioUser(inventario);
                 break;
             case 2:
+                limpiarPantalla();
                 cargarPedidosCSV(pedidos, inventario, precioProductos); // Cargar un pedido para un cliente
                 break;
             case 3:
+                limpiarPantalla();
                 visualizacionInventario(inventario); // Ver inventario
                 break;
             case 4:
+                limpiarPantalla();
                 cargarCargaDesdeCSV(inventario, precioProductos);
                 break;
             case 5:
+                limpiarPantalla();
                 exportarInventario(inventario);
                 break;
             case 6:
+                limpiarPantalla();
                 mostrarProductos(precioProductos);
                 break;
             case 7:
+                limpiarPantalla();
                 cuadrarInventario(inventario, precioProductos);
                 break;
             case 8:
+                limpiarPantalla();
                 buscarProductoPorCodigo(inventario);
                 break;
             case 9:
+                limpiarPantalla();
                 actualizarProductosPorTipo(productosPorTipo, inventario);
                 buscarProductosPorTipo(productosPorTipo);
                 break;
             case 10:
+                limpiarPantalla();
                // pagar();
                 break;
             case 11:
@@ -422,8 +445,8 @@ int main(int argc, char *argv[]) {
             default:
                 puts("Opción no válida, intente nuevamente");
         }
-        
         presioneTeclaParaContinuar();
+        limpiarPantalla();
     } while(opcion != 11);
     
     map_clean(inventario);
