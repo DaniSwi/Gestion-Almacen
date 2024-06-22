@@ -63,7 +63,7 @@ void mostrarMenuPrincipal() {
   puts("========================================");
 
   puts("1) Agregar producto al inventario manualmente");
-  puts("2) Cargar lista desde archivo CSV");
+  puts("2) Cargar lista de pedidos desde archivo CSV");
   puts("3) Visualizar el inventario");
   puts("4) Gestionar nueva carga de productos desde CSV");
   puts("5) Exportar inventario a CSV");

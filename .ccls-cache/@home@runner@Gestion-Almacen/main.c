@@ -63,13 +63,22 @@ void formatearCadena(char *cadena){
     }
 }
 
+void leerCodigoBarra() {
+
+    char codigoBarra[100];
+    printf("Ingrese el codigo de barra: ");
+    scanf("%s", codigoBarra);
+    printf("Código de barra: %s\n", codigoBarra);
+    
+}
+
 void agregarProductoInventarioUser(Map *inventario){
     char car = 'n';
     do {
         int codigo;
         printf("Ingrese el código del producto: ");
         scanf("%d", &codigo);
-        MapPair *pair = map_search(inventario, &codigo);
+        MapPair *pair = map_search(inventario, &codigo); // O(1)
         Producto *producto = crearProducto();
         producto->codigo = codigo;
         if(pair){
@@ -170,24 +179,27 @@ void cargarPedidosCSV(List *pedidos, Map *inventario, Map *productosPrecio){ // 
     while ((campos = leer_linea_csv(archivo, ',')) != NULL) {
         Pedido *pedido = crearPedido();
         pedido->cantidad = atoi(campos[0]);
+        //strtok();
+        char *aux = strtok(campos[1], "\n");
+        //printf("\n- - - -\n%s\n- - - -\n", aux);
         strcpy(pedido->productoPedido.nombre, campos[1]);
         formatearCadena(pedido->productoPedido.nombre);
         MapPair *pair = map_search(productosPrecio, pedido->productoPedido.nombre);
-        if(pair){
+        if(pair) {
             Producto *producto = (Producto *)pair->value;
             pedido->productoPedido.precioVenta = producto->precioVenta;
             pedido->productoPedido.codigo = producto->codigo;
             list_pushBack(pedidos, pedido);
         } else 
-            printf("No se encuentra el producto %s en el inventario, por lo que no se agregrá a la lista de pedidos\n", pedido->productoPedido.nombre);
+            printf("No se encuentra el producto %s en el inventario, por lo que no se agregará a la lista de pedidos\n", pedido->productoPedido.nombre);
     }
     fclose(archivo);
     Pedido *aux = (Pedido *)list_first(pedidos);
     while(aux){
-        printf("Nombre producto: %s", aux->productoPedido.nombre);
-        printf("Precio: %d", aux->productoPedido.precioVenta);
-        printf("Cantidad: %d", aux->cantidad);
-        printf("Tipo: %s", aux->productoPedido.tipoProducto);
+        printf("Nombre producto: %s\n", aux->productoPedido.nombre);
+        printf("Precio: %d\n", aux->productoPedido.precioVenta);
+        printf("Cantidad: %d\n", aux->cantidad);
+        printf("Tipo: %s\n", aux->productoPedido.tipoProducto);
         actualizarInventario(inventario, aux->productoPedido.codigo, aux->cantidad);
         aux = (Pedido *)list_next(pedidos);
     }
@@ -264,6 +276,10 @@ void mostrarProductos(Map *productos){
 
 void cuadrarInventario(Map *inventario, Map *productosPrecio) {
     MapPair *pair = map_first(inventario);
+    if(!pair) {
+        printf("No hay elementos en el inventario!\n");
+        return;
+    }
     while(pair) {
         List *listaProductos = (List *)pair->value;
         Producto *producto = (Producto *)list_first(listaProductos);
@@ -296,6 +312,7 @@ void exportarInventario(Map *inventario){
             producto = (Producto *)list_next(listProductos);
         }
     }
+    printf("\nSe ha exportado correctamente el inventario al archivo inventarioOutput.csv\n"); 
     fclose(archivo);
 }
 
@@ -309,19 +326,16 @@ void buscarProductoPorCodigo(Map *inventario){
         Producto *producto = (Producto *)list_first(listaProductos);
         printf("\nEl producto %s existe en el inventario\n", producto->nombre);
     } else 
-        printf("Kys you nigger\n");
+        printf("El producto con código %d no existe en el inventario\n", codigo);
 }
 
-void cocinarMapa(Map *productosPorTipo, Map *inventario){
+void actualizarProductosPorTipo(Map *productosPorTipo, Map *inventario){ 
     MapPair *pair = map_first(inventario);
     while(pair){
         List *listaProductos = (List *)pair->value;
         Producto *producto = (Producto *)list_first(listaProductos);
         MapPair *par = map_search(productosPorTipo, producto->tipoProducto);
-        if(par){
-            List *listaProductosTipo = (List *)par->value;
-            list_pushBack(listaProductosTipo, producto);
-        } else {
+        if(!par) {
             List *listaProductosTipo = list_create();
             list_pushBack(listaProductosTipo, producto);
             map_insert(productosPorTipo, strdup(producto->tipoProducto), listaProductosTipo);
@@ -334,6 +348,7 @@ void buscarProductosPorTipo(Map *productosPorTipo){
     char tipo[1000];
     printf("\nIngrese el tipo de producto a buscar: ");
     scanf(" %[^\n]1000s", tipo);
+    formatearCadena(tipo);
     MapPair *pair = map_search(productosPorTipo, tipo);
     if(pair){
         List *listaProductos = (List *)pair->value;
@@ -342,32 +357,21 @@ void buscarProductosPorTipo(Map *productosPorTipo){
         while(producto){
             printf("\n==============================\n");
             printf("Nombre: %s\n", producto->nombre);
-            printf("Precio de costo: %d\n", producto->precioVenta);
+            printf("Precio de venta: %d\n", producto->precioVenta);
             printf("================================\n");
             producto = (Producto *)list_next(listaProductos);
         }
     } else {
-        printf("No se encuentran productos del tipo %s", tipo);
+        printf("\nNo se encuentran productos del tipo %s\n", tipo);
     }
 }
 
-/*void test(Map *productosPrecios){
-    char te[1000];
-    scanf(" %[^\n]1000s", te);
-    formatearCadena(te);
-    MapPair *pair = map_search(productosPrecios, te);
-    if(pair){
-        Producto *producto = (Producto *)pair->value;
-        printf("El producto %s existe en el inventario\n", producto->nombre);
-    } else {
-        printf("El pepe");
-    }
-} */
+//void pagar() {};
 
 //tarjeta / efectivo 1500 -> 2000
 //tarjeta: debito o credito (cuasi innecesario)
 
-int main() {
+int main(int argc, char *argv[]) {
 
     int opcion;
     List *pedidos = list_create();
@@ -406,27 +410,26 @@ int main() {
                 buscarProductoPorCodigo(inventario);
                 break;
             case 9:
-                cocinarMapa(productosPorTipo, inventario);
+                actualizarProductosPorTipo(productosPorTipo, inventario);
                 buscarProductosPorTipo(productosPorTipo);
                 break;
             case 10:
-                //test(precioProductos);
+               // pagar();
                 break;
             case 11:
+                printf("Saliendo del menú principal!\n");
                 break;
             default:
-                
                 puts("Opción no válida, intente nuevamente");
         }
+        
         presioneTeclaParaContinuar();
-    } while(opcion != 20);
+    } while(opcion != 11);
     
     map_clean(inventario);
     map_clean(precioProductos);
     map_clean(productosPorTipo);
+    list_clean(pedidos);
     
     return 0;
 }
-
-//Habemus problema con la 2 de cargar pedidos :p
-//

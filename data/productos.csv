@@ -1,7 +1,6 @@
 CodigoProducto,NombreProducto,PrecioVentaAlPublico
 836294,Pan integral Ideal,2000
 926486,Ketchup hellmans,2600
-666666,El diaulo,6666
 782674,Queso rallado Colun 80g,800
 812375,Queso rallado Soprole 75g,750
 673625,Alfi,400
@@ -19,8 +18,9 @@ CodigoProducto,NombreProducto,PrecioVentaAlPublico
 017495,Chorizo envasado RDA 1kg,4000
 192754,Hamburguesa vacuno RDA 100g,900
 174927,Super 8,400
-201285,Centella Savory,200
-193785,Papa 1kg,1300
-845729,Cebolla 1kg,1000
-568285,Tomate 1kg,900
-482395,Zanahoria 1kg,700
+201285,Centella Savory,300
+60,Papa 1kg,800
+70,Cebolla 1kg,1200
+80,Tomate 1kg,1500
+90,Zanahoria 1kg,300
+100, Queso Laminado,4500
