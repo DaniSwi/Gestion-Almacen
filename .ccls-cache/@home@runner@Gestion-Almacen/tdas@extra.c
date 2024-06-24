@@ -61,7 +61,6 @@ void mostrarMenuPrincipal() {
   puts("========================================");
   puts("        Almacén de Productos ");
   puts("========================================");
-
   puts("1) Agregar producto al inventario manualmente");
   puts("2) Cargar lista de pedidos desde archivo CSV");
   puts("3) Visualizar el inventario");
@@ -72,7 +71,7 @@ void mostrarMenuPrincipal() {
   puts("8) Buscar producto por código");
   puts("9) Buscar productos por tipo");
   puts("10) Proceder con el pago");
-  puts("11) Terminar con la sesion");
+  puts("11) Terminar con la sesión");
 }
 
 int is_equal_str(void *key1, void *key2) {
