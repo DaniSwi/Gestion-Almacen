@@ -1,1 +1,2 @@
-NombreProducto,PrecioCosto,PrecioVenta,Cantidad,TipoProducto,DiaVencimientoLote,MesVencimientoLote,YearVencimientoLote
+NombreProducto,PrecioCosto,PrecioVenta,TipoProducto,DiaVencimiento,MesVencimiento,YearVencimiento
+Alfi,300,600,ALFAJOR,1,1,2001

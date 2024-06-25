@@ -58,9 +58,9 @@ void presioneTeclaParaContinuar() {
 
 void mostrarMenuPrincipal() {
   limpiarPantalla();
-  puts("========================================");
-  puts("        Almacén de Productos ");
-  puts("========================================");
+  puts("===============================================");
+  puts("             Almacén de Productos ");
+  puts("===============================================");
   puts("1) Agregar producto al inventario manualmente");
   puts("2) Cargar lista de pedidos desde archivo CSV");
   puts("3) Visualizar el inventario");
