@@ -14,7 +14,7 @@ typedef struct {
   int dia;
   int mes;
   int year;
-} fechaVencimiento;
+} fechaVencimiento; 
 
 typedef struct {
   int precioCosto;
@@ -130,7 +130,7 @@ void visualizacionInventario(Map *inventario) {
     printf("\nLista de productos %s que hay en el inventario: \n",
            producto->nombre);
     while (producto) {
-      printf("* Producto %s con fecha de vencimiento el %d/%d/%d\n",
+      printf("  * Producto %s con fecha de vencimiento el %d/%d/%d\n",
              producto->nombre, producto->fechaV.dia, producto->fechaV.mes,
              producto->fechaV.year);
       producto = (Producto *)list_next(listaProductos);
@@ -414,10 +414,13 @@ void buscarProductosPorTipo(Map *productosPorTipo) {
 
 void mostrarPedido(List *pedidos, int size) {
   limpiarPantalla();
+  printf("====================================\n");
+  printf("             Pedido.\n");
+  printf("====================================\n");
   if(size == 0) {
-    printf("Pedido vacío\n");
+    printf("\nNo hay productos en el pedido\n");
   } else {
-    printf("Producto(s) en el pedido:\n\n");
+    printf("\nProducto(s) en el pedido:\n\n");
     int sumaPrecio = 0;
     Pedido *aux = list_first(pedidos);
     while (aux) {
@@ -427,6 +430,7 @@ void mostrarPedido(List *pedidos, int size) {
     }
     printf("\nCosto total: %d$\n", sumaPrecio);
   }
+  printf("\n====================================\n\n");
 }
 
 Pedido *buscarEnPedido(List *pedidos, int codigo)
@@ -441,114 +445,214 @@ Pedido *buscarEnPedido(List *pedidos, int codigo)
   return NULL;
 }
 
-void agregarProductoPedido(List *pedidos, Map *inventario, int *size)
+void agregarProductoPedido(List *pedidos, Map *inventario, int size)
 {
-  mostrarPedido(pedidos, *size);
-  int codigo;
-  printf("Ingresar codigo de producto: ");
-  scanf("%d", &codigo);
+  printf("==============================================\n");
+  printf("               Gestionar Pedido               \n");
+  printf("==============================================\n");
   int op;
-  Pedido *aux = buscarEnPedido(pedidos, codigo);
-  if(aux) {
-    printf("\nYa se ha ingresado este producto a la lista\n");
-    printf("1) Agregar producto\n");
-    printf("2) Eliminar producto\n");
-    printf("0) Cancelar\n");
-    printf("Ingresar opción: ");
-    scanf("%d", &op);
-  } else {
-    printf("\nNo se ha ingresado este producto a la lista\n");
-    printf("1) Agregar producto\n");
-    printf("0) Cancelar\n");
-    printf("Ingresar opción: ");
-    scanf("%d", &op);
-  } // Se asume que el producto está en el inventario
-  
-  if(op == 1) {
-    MapPair *pair = map_search(inventario, &codigo);
-    int sizeInvenProdu = list_size(pair->value);
-    int cant;
-    printf("Ingrese la cantidad de productos que se van a añadir: ");
-    scanf("%d", &cant);
-    int cantTotal = aux->cantidad + cant;
-    if(sizeInvenProdu < cantTotal) {
-      printf("La cantidad deseada es mayor que la cantidad en inventario\n");
-      printf("Se descartarán todos los productos en inventario (%d)\n", sizeInvenProdu);
-      cantTotal = sizeInvenProdu;
-    }
-    if(aux) { // Ya se añadieron otros prods
-      aux->cantidad = cantTotal;
-    } else {
-      /*MapPair *pair = map_search(inventario, &codigo);
-      int sizeInv = list_size(pair->value);
-      if(sizeInv > 0) {
-        int contadorEliminados = 0;
-        while (contadorEliminados < cantidad) {
-          list_popBack(listaProductos); 
-          ++contadorEliminados;
-        }
-      } else {
-        printf("\nNo quedan mas unidades de ese producto\n");
-      }*/
-      
-    }
-  }
-  
-}
-
-void modificarPedido(List *pedidos, Map *inventario, unsigned short ctrl, int *size)
-{
-  char op;
   do {
-    limpiarPantalla();
-    printf("=====================================\n");
-    printf("   Menú de modificación del pedido   \n");
-    printf("=====================================\n");
-    if (ctrl == 0) {
-      printf("1) Agregar producto al pedido\n");
-      printf("0) Volver al menú de gestión de pedido\n");
+    mostrarPedido(pedidos, size);
+    int codigo;
+    printf("\nIngresar codigo de producto: ");
+    scanf("%d", &codigo);
+
+    printf("\n\n==============================================\n");
+    
+    Pedido *aux = buscarEnPedido(pedidos, codigo);
+    if(aux) {
+      printf("\nEl producto: %s con codigo: %i\n", aux->producto.nombre, aux->producto.codigo);
+      printf("1) Agregar producto\n");
+      printf("2) Eliminar producto\n");
+      printf("0) Cancelar\n");
+      printf("Ingresar opción: ");
+      scanf("%d", &op);
     } else {
-      printf("1) Agregar producto al pedido\n");
-      printf("2) Eliminar producto del pedido\n");
-      printf("0) Volver al menú de gestión de pedido\n");
-    }
-    scanf(" %c", &op);
-    if (op == '1') {
-      agregarProductoPedido(pedidos, inventario, size);
-    } else if (ctrl == 1 && op == '2') {
-      agregarProductoPedido(pedidos, inventario, size);
-    } else if (op == '0') {
-      printf("Volviendo al menú de gestión de pedido\n");
+      printf("\nNo se ha ingresado este producto a la lista\n");
+      printf("1) Agregar producto\n");
+      printf("0) Cancelar\n");
+      printf("Ingresar opción: ");
+      scanf("%d", &op);
+    } // Se asume que el producto está en el inventario
+
+    printf("\n==============================================\n");
+    
+    if(op == 0) return;
+    int cant;
+    int cantTotal;
+    if(op == 1) {
+      MapPair *pair = map_search(inventario, &codigo);
+      if(!pair) {
+        printf("No hay registro de este producto en el inventario\n");
+      } else {
+        int sizeInvenProdu = list_size(pair->value);
+        printf("Ingrese la cantidad de productos que se van a añadir: ");
+        scanf("%d", &cant);
+        if(!aux) cantTotal = cant;
+        else cantTotal = aux->cantidad + cant;
+        if(sizeInvenProdu < cantTotal) {
+          printf("La cantidad deseada es mayor que la cantidad en inventario\n");
+          printf("Se descartarán todos los productos en inventario (%d)\n", sizeInvenProdu);
+          cantTotal = sizeInvenProdu;
+        }
+        if(aux) {
+          aux->cantidad = cantTotal;
+        } else {
+          Pedido *new = crearPedido();
+          Producto *auxProd = list_first(pair->value);
+          new->cantidad = cantTotal;
+          new->monto = auxProd->precioVenta * cantTotal;
+          new->producto = *auxProd;
+          list_pushBack(pedidos, new);
+        }
+      }
+    } else if(aux && op == 2) {
+      printf("Ingrese la cantidad de productos que se van a eliminar: ");
+      scanf("%d", &cant);
+      cantTotal = aux->cantidad - cant;
+      if(cantTotal > 0) {
+        aux->cantidad = cantTotal;
+      } else {
+        if(cantTotal == 0) printf("Se eliminará el producto del pedido\n");
+        else printf("Se quieren eliminar más productos de los que hay en el inventario, se eliminan todos\n");
+        list_popCurrent(pedidos);
+      }
     } else {
       printf("Opción no valida, intente de nuevo.\n");
     }
     presioneTeclaParaContinuar();
-  } while (op != '0');
+  } while(op != 0);
+  printf("==============================================\n\n");
 }
 
-void procesarPago(List *pedidos, Map *inventario) 
+void modificarPedido(List *pedidos, Map *inventario, int size)
+{
+  char op;
+  do {
+    limpiarPantalla();
+    printf("=============================================\n");
+    printf("       Menú de modificación del pedido    \n");
+    printf("=============================================\n");
+    printf("1) Agregar/Eliminar producto del pedido\n");
+    printf("2) Volver al menú de gestión de pedido\n");
+    printf("Ingresar opción: ");
+    scanf(" %c", &op);
+    switch(op) {
+      case '1':
+        agregarProductoPedido(pedidos, inventario, size);
+        break;
+      case '2':
+        printf("\nVolviendo al menú de gestión de pedido\n");
+        break;
+      default:
+        printf("Opción no valida, intente de nuevo.\n");
+    }
+    presioneTeclaParaContinuar();
+  } while (op != '2');
+}
+
+void pagoEfectivo(List *pedidos)
+{
+  int sumaPrecio = 0;
+  Pedido *aux = list_first(pedidos);
+  while (aux) {
+    sumaPrecio += (aux->producto.precioVenta * aux->cantidad);
+    aux = list_next(pedidos);
+  }
+  int pago;
+  do {
+    limpiarPantalla();
+    printf("Monto a pagar: %d\n", sumaPrecio);
+    printf("Cantidad de dinero pagada: ");
+    scanf("%d", &pago);
+    if(pago < sumaPrecio) printf("Faltan %d$\n", sumaPrecio - pago);
+    else if(pago == sumaPrecio) printf("Pago exacto, no necesita vuelto\n");
+    else printf("El vuelto es %d$\n", pago - sumaPrecio);
+  } while(pago < sumaPrecio);
+}
+
+void procesarPago(List *pedidos, Map *inventario, int size) 
 { 
-  printf("3\n"); 
+  int op;
+  do {
+    mostrarPedido(pedidos, size);
+    printf("1) Confirmar pedido\n");
+    printf("2) Cancelar\n");
+    printf("Ingrese una opción: ");
+    scanf("%d", &op);
+    switch(op) {
+      case 1:
+        printf("Forma de pago\n");
+        printf("1) Pago con tarjeta\n");
+        printf("2) Pago en efectivo\n");
+        printf("3) Cancelar Compra\n");
+        printf("Ingrese método de pago: ");
+        int mp;
+        scanf("%d", &mp);
+        switch(mp) {
+          case 1:
+            printf("Pago exitoso!\n");
+            presioneTeclaParaContinuar();
+            return;
+          case 2:
+            pagoEfectivo(pedidos);
+            presioneTeclaParaContinuar();
+            return;
+          case 3:
+            printf("Compra cancelada\n");
+            break;
+          default:
+            printf("Opción no valida, intente de nuevo.\n");
+        }
+        break;
+      case 2:
+        printf("Volviendo al menú de gestión de pedido\n");
+        break;
+    }
+    presioneTeclaParaContinuar();
+  } while(op != 2);
 }
 
 void mostrarMenuPedidoVacio() 
 {
   limpiarPantalla();
+  printf("=======================================\n");
+  printf("             Menú pedido\n");
+  printf("=======================================\n");
   printf("Actualmente no hay datos de pedido\n");
   printf("Se pueden agregar productos manualmente o utilizando la 2da función "
          "del menú principal\n");
-  printf("1) Agregar productos manualmente\n");
+  printf("1) Agregar producto con codigo de barras\n");
+  printf("2) Agregar productos manualmente");
   printf("0) Volver al menú principal\n");
+  printf("Ingrese una opción: ");
 }
 
 void mostrarMenuPedido() 
 {
   limpiarPantalla();
+  printf("=======================================\n");
+  printf("             Menú pedido\n");
+  printf("=======================================\n");
   printf("Actualmente hay datos de un pedido en el sistema\n");
   printf("1) Ver datos del pedido actual\n");
   printf("2) Modificar datos del pedido actual\n");
   printf("3) Procesar compra\n");
   printf("0) Volver al menú principal\n");
+  printf("Ingrese una opción: ");
+}
+// Pedido *pedido (producto, cantidad, monto)
+void agregarManual(List *pedidos)
+{
+  int cantidad = 0;
+  char nombre[1000];
+  int monto = 0;
+  
+  Pedido *ped = crearPedido();
+  strcpy(ped->producto.nombre, nombre);
+  ped->cantidad = cantidad;
+  ped->monto = monto;
+
 }
 
 void procesarVenta(List *pedidos, Map *inventario) // Hermano dejate de wear
@@ -562,8 +666,10 @@ void procesarVenta(List *pedidos, Map *inventario) // Hermano dejate de wear
       scanf(" %c", &op);
       switch (op) {
       case '1':
-        modificarPedido(pedidos, inventario, 0, &pedidoSize);
+        modificarPedido(pedidos, inventario, pedidoSize);
         break;
+      case '2':
+        agregarManual(pedidos);
       case '0':
         printf("Volviendo al menú principal\n");
         break;
@@ -580,11 +686,11 @@ void procesarVenta(List *pedidos, Map *inventario) // Hermano dejate de wear
         presioneTeclaParaContinuar();
         break;
       case '2':
-        modificarPedido(pedidos, inventario, 1, &pedidoSize);
+        modificarPedido(pedidos, inventario, pedidoSize);
         break;
       case '3':
-        procesarPago(pedidos, inventario);
-        return;
+        procesarPago(pedidos, inventario, pedidoSize);
+        break;
       case '0':
         printf("Volviendo al menú principal\n");
         break;
@@ -627,6 +733,7 @@ void cargarInventario(Map *inventario) {
     }
   }
 }
+
 
 int main(int argc, char *argv[]) {
 
@@ -703,4 +810,3 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
-
